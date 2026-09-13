@@ -1,0 +1,50 @@
+local StarterGui = game:GetService("StarterGui")
+local Workspace = game:GetService("Workspace")
+
+getgenv().KATRemoveBarriers = getgenv().KATRemoveBarriers or {
+    enabled = false,
+}
+local S = getgenv().KATRemoveBarriers
+
+local function notify(text)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "KATWare",
+            Text = text,
+            Duration = 3,
+        })
+    end)
+end
+
+local function removeBarriers()
+    local count = 0
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            local name = v.Name:lower()
+            if name:find("barrier") or name:find("wall") or name:find("invisible") or name:find("block") then
+                pcall(function()
+                    v.CanCollide = false
+                    v.Transparency = 1
+                    count = count + 1
+                end)
+            end
+        end
+    end
+    notify("Barriers removed: " .. count)
+end
+
+getgenv().KATRemoveBarriersToggle = function(state)
+    S.enabled = state
+    if state then
+        removeBarriers()
+        notify("Remove Barriers ON")
+    else
+        notify("Remove Barriers OFF")
+    end
+end
+
+getgenv().KATRemoveBarriersNow = function()
+    removeBarriers()
+end
+
+return true
